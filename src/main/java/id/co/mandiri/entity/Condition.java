@@ -9,11 +9,11 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "color")
+@Table(name = "conditions")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Color {
+public class Condition {
 
     @Id
     @GenericGenerator(name = "uuid_gen", strategy = "uuid2")
@@ -23,9 +23,6 @@ public class Color {
     
     @Column(name = "name", nullable = false, length = 20)
     private String name;
-    
-    @Column(name = "code", nullable = false, length = 10)
-    private String code;
     
     @Lob
     @Type(type = "text")
