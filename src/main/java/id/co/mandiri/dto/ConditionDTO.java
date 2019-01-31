@@ -13,8 +13,8 @@ public class ConditionDTO {
     @NoArgsConstructor
     public static class ConditionRequestNewDTO {
         @NotNull
-        private String name;
-        private String description;
+        private String conditionName;
+        private String conditionDescription;
     }
 
     @Data
@@ -22,10 +22,10 @@ public class ConditionDTO {
     @NoArgsConstructor
     public static class ConditionRequestUpdateDTO {
         @NotNull
-        private String id;
+        private String conditionId;
         @NotNull
-        private String name;
-        private String description;
+        private String conditionName;
+        private String conditionDescription;
     }
 
 }

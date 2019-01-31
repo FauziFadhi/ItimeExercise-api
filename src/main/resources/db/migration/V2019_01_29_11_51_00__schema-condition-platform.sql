@@ -9,7 +9,7 @@
  */
 
 create table conditions(
-    id varchar(64) not null primary key,
-    name varchar(20) not null,
-    description text
+    condition_id varchar(64) not null primary key,
+    condition_name varchar(20) not null,
+    condition_description text
 ) 

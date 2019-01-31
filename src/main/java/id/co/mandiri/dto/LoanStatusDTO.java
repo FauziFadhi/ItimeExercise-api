@@ -14,8 +14,8 @@ public class LoanStatusDTO {
     @NoArgsConstructor
     public static class LoanStatusRequestNewDTO {
         @NotNull
-        private String name;
-        private String description;
+        private String loanStatusName;
+        private String loanStatusDescription;
         private Color color;
 
     }
@@ -25,10 +25,10 @@ public class LoanStatusDTO {
     @NoArgsConstructor
     public static class LoanStatusRequestUpdateDTO {
         @NotNull
-        private String id;
+        private String loanStatusId;
         @NotNull
-        private String name;
-        private String description;
+        private String loanStatusName;
+        private String loanStatusDescription;
         private Color color;
         
     }

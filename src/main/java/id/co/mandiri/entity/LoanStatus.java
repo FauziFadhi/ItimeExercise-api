@@ -19,11 +19,11 @@ public class LoanStatus {
     @Id
     @GenericGenerator(name = "uuid_gen", strategy = "uuid2")
     @GeneratedValue(generator = "uuid_gen")
-    @Column(name = "id", nullable = false, length = 64)
-    private String id;
+    @Column(name = "loan_status_id", nullable = false, length = 64)
+    private String loanStatusId;
     
-    @Column(name = "name", nullable = false, length = 20)
-    private String name;
+    @Column(name = "loan_status_name", nullable = false, length = 20)
+    private String loanStatusName;
     
     @JsonIgnoreProperties
     @OneToOne
@@ -32,6 +32,6 @@ public class LoanStatus {
     
     @Lob
     @Type(type = "text")
-    @Column(name = "description")
-    private String description;
+    @Column(name = "loan_status_description")
+    private String loanStatusDescription;
 }

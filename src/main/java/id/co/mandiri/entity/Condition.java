@@ -18,14 +18,14 @@ public class Condition {
     @Id
     @GenericGenerator(name = "uuid_gen", strategy = "uuid2")
     @GeneratedValue(generator = "uuid_gen")
-    @Column(name = "id", nullable = false, length = 64)
-    private String id;
+    @Column(name = "condition_id", nullable = false, length = 64)
+    private String conditionId;
     
-    @Column(name = "name", nullable = false, length = 20)
-    private String name;
+    @Column(name = "condition_name", nullable = false, length = 20)
+    private String conditionName;
     
     @Lob
     @Type(type = "text")
-    @Column(name = "description")
-    private String description;
+    @Column(name = "condition_description")
+    private String conditionDescription;
 }

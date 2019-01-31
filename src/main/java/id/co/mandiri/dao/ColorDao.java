@@ -13,6 +13,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+
 
 @Repository
 public class ColorDao implements DaoCrudDataTablesPattern<Color, String> {
@@ -58,7 +60,7 @@ public class ColorDao implements DaoCrudDataTablesPattern<Color, String> {
 
     @Override
     public List<Color> datatables(DataTablesRequest<Color> params) {
-        String baseQuery = "select id, name, code, description\n" +
+        String baseQuery = "select * \n" +
                 "from color\n" +
                 "where 1 = 1 ";
 
@@ -68,55 +70,41 @@ public class ColorDao implements DaoCrudDataTablesPattern<Color, String> {
         StringBuilder query = compare.getQuery(param);
         MapSqlParameterSource values = compare.getParameters();
 
+        String order = "desc";
+        if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
+            order="asc";
+        
         switch (params.getColOrder().intValue()) {
             case 0:
-                if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
-                    query.append(" order by id asc ");
-                else
-                    query.append(" order by id desc ");
+                    query.append(" order by color_id ").append(order).append(" ");
                 break;
             case 1:
-                if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
-                    query.append(" order by name asc ");
-                else
-                    query.append(" order by name desc ");
+                    query.append(" order by color_name ").append(order).append(" ");
                 break;
             case 2:
-                if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
-                    query.append(" order by description asc ");
-                else
-                    query.append(" order by description desc ");
+                    query.append(" order by color_code ").append(order).append(" ");
                 break;
             case 3:
-                if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
-                    query.append(" order by code asc ");
-                else
-                    query.append(" order by code desc ");
+                    query.append(" order by color_description ").append(order).append(" ");
                 break;
             default:
-                if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
-                    query.append(" order by id asc ");
-                else
-                    query.append(" order by id desc ");
+                query.append(" order by color_id ").append(order).append(" ");
                 break;
         }
 
         query.append("limit :limit offset :offset");
         values.addValue("offset", params.getStart());
         values.addValue("limit", params.getLength());
-
-        return this.jdbcTemplate.query(query.toString(), values, (resultSet, i) ->
-                new Color(
-                        resultSet.getString("id"),
-                        resultSet.getString("name"),
-                        resultSet.getString("code"),
-                        resultSet.getString("description")
-                ));
+ //auto Mapping to entity
+        return this.jdbcTemplate.query(
+                query.toString(), 
+                values, 
+                new BeanPropertyRowMapper(Color.class));
     }
 
     @Override
     public Long datatables(Color param) {
-        String baseQuery = "select count(id) as rows \n" +
+        String baseQuery = "select count(color_id) as rows \n" +
                 "from color\n" +
                 "where 1 = 1 ";
 
@@ -145,35 +133,35 @@ public class ColorDao implements DaoCrudDataTablesPattern<Color, String> {
 
         @Override
         public StringBuilder getQuery(Color param) {
-            if (StringUtils.isNoneBlank(param.getId())) {
-                query.append(" and lower(id) like :id ");
+            if (StringUtils.isNoneBlank(param.getColorId())) {
+                query.append(" and lower(color_id) like :id ");
                 parameterSource.addValue("id",
                         new StringBuilder("%")
-                                .append(param.getId().toLowerCase())
+                                .append(param.getColorId().toLowerCase())
                                 .append("%")
                                 .toString());
             }
 
-            if (StringUtils.isNoneBlank(param.getName())) {
-                query.append(" and lower(name) like :name ");
+            if (StringUtils.isNoneBlank(param.getColorName())) {
+                query.append(" and lower(color_name) like :name ");
                 parameterSource.addValue("name", new StringBuilder("%")
-                        .append(param.getName().toLowerCase())
+                        .append(param.getColorName().toLowerCase())
                         .append("%")
                         .toString());
             }
 
-            if (StringUtils.isNoneBlank(param.getDescription())) {
-                query.append(" and lower(description) like :description ");
+            if (StringUtils.isNoneBlank(param.getColorDescription())) {
+                query.append(" and lower(color_description) like :description ");
                 parameterSource.addValue("description", new StringBuilder("%")
-                        .append(param.getDescription().toLowerCase())
+                        .append(param.getColorDescription().toLowerCase())
                         .append("%")
                         .toString());
             }
             
-            if (StringUtils.isNoneBlank(param.getDescription())) {
-                query.append(" and lower(code) like :code ");
+            if (StringUtils.isNoneBlank(param.getColorCode())) {
+                query.append(" and lower(color_code) like :code ");
                 parameterSource.addValue("code", new StringBuilder("%")
-                        .append(param.getCode().toLowerCase())
+                        .append(param.getColorCode().toLowerCase())
                         .append("%")
                         .toString());
             }

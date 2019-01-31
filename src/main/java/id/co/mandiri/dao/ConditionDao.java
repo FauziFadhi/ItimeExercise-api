@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import java.util.Optional;
 
 @Repository
@@ -58,7 +59,7 @@ public class ConditionDao implements DaoCrudDataTablesPattern<Condition, String>
 
     @Override
     public List<Condition> datatables(DataTablesRequest<Condition> params) {
-        String baseQuery = "select id, name, description\n" +
+        String baseQuery = "select *\n" +
                 "from conditions\n" +
                 "where 1 = 1 ";
 
@@ -68,48 +69,38 @@ public class ConditionDao implements DaoCrudDataTablesPattern<Condition, String>
         StringBuilder query = compare.getQuery(param);
         MapSqlParameterSource values = compare.getParameters();
 
+        String order = "desc";
+        if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
+            order="asc";
+        
         switch (params.getColOrder().intValue()) {
             case 0:
-                if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
-                    query.append(" order by id asc ");
-                else
-                    query.append(" order by id desc ");
+                    query.append(" order by condition_id ").append(order).append(" ");
                 break;
             case 1:
-                if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
-                    query.append(" order by name asc ");
-                else
-                    query.append(" order by name desc ");
+                    query.append(" order by condition_name ").append(order).append(" ");
                 break;
             case 2:
-                if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
-                    query.append(" order by description asc ");
-                else
-                    query.append(" order by description desc ");
+                    query.append(" order by condition_description ").append(order).append(" ");
                 break;
             default:
-                if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
-                    query.append(" order by id asc ");
-                else
-                    query.append(" order by id desc ");
+                query.append(" order by condition_id ").append(order).append(" ");
                 break;
         }
 
         query.append("limit :limit offset :offset");
         values.addValue("offset", params.getStart());
         values.addValue("limit", params.getLength());
-
-        return this.jdbcTemplate.query(query.toString(), values, (resultSet, i) ->
-                new Condition(
-                        resultSet.getString("id"),
-                        resultSet.getString("name"),
-                        resultSet.getString("description")
-                ));
+ //auto Mapping to entity
+        return this.jdbcTemplate.query(
+                query.toString(), 
+                values, 
+                new BeanPropertyRowMapper(Condition.class));
     }
 
     @Override
     public Long datatables(Condition param) {
-        String baseQuery = "select count(id) as rows \n" +
+        String baseQuery = "select count(condition_id) as rows \n" +
                 "from conditions\n" +
                 "where 1 = 1 ";
 
@@ -138,27 +129,27 @@ public class ConditionDao implements DaoCrudDataTablesPattern<Condition, String>
 
         @Override
         public StringBuilder getQuery(Condition param) {
-            if (StringUtils.isNoneBlank(param.getId())) {
-                query.append(" and lower(id) like :id ");
+            if (StringUtils.isNoneBlank(param.getConditionId())) {
+                query.append(" and lower(condition_id) like :id ");
                 parameterSource.addValue("id",
                         new StringBuilder("%")
-                                .append(param.getId().toLowerCase())
+                                .append(param.getConditionId().toLowerCase())
                                 .append("%")
                                 .toString());
             }
 
-            if (StringUtils.isNoneBlank(param.getName())) {
-                query.append(" and lower(name) like :name ");
+            if (StringUtils.isNoneBlank(param.getConditionName())) {
+                query.append(" and lower(condition_name) like :name ");
                 parameterSource.addValue("name", new StringBuilder("%")
-                        .append(param.getName().toLowerCase())
+                        .append(param.getConditionName().toLowerCase())
                         .append("%")
                         .toString());
             }
 
-            if (StringUtils.isNoneBlank(param.getDescription())) {
-                query.append(" and lower(description) like :description ");
+            if (StringUtils.isNoneBlank(param.getConditionDescription())) {
+                query.append(" and lower(condition_description) like :description ");
                 parameterSource.addValue("description", new StringBuilder("%")
-                        .append(param.getDescription().toLowerCase())
+                        .append(param.getConditionDescription().toLowerCase())
                         .append("%")
                         .toString());
             }

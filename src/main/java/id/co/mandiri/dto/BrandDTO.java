@@ -13,8 +13,8 @@ public class BrandDTO {
     @NoArgsConstructor
     public static class BrandRequestNewDTO {
         @NotNull
-        private String name;
-        private String description;
+        private String brandName;
+        private String brandDescription;
     }
 
     @Data
@@ -24,8 +24,8 @@ public class BrandDTO {
         @NotNull
         private String id;
         @NotNull
-        private String name;
-        private String description;
+        private String brandName;
+        private String brandDescription;
     }
 
 }

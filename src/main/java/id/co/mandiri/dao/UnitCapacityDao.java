@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 
 @Repository
 public class UnitCapacityDao implements DaoCrudDataTablesPattern<UnitCapacity, String> {
@@ -58,8 +59,8 @@ public class UnitCapacityDao implements DaoCrudDataTablesPattern<UnitCapacity, S
 
     @Override
     public List<UnitCapacity> datatables(DataTablesRequest<UnitCapacity> params) {
-        String baseQuery = "select id, name, code, description\n" +
-                "from unit_capacity\n" +
+        String baseQuery = "select * \n" +
+                "from unit_capacity \n" +
                 "where 1 = 1 ";
 
         UnitCapacity param = params.getValue();
@@ -68,56 +69,42 @@ public class UnitCapacityDao implements DaoCrudDataTablesPattern<UnitCapacity, S
         StringBuilder query = compare.getQuery(param);
         MapSqlParameterSource values = compare.getParameters();
 
+        String order = "desc";
+        if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
+            order="asc";
+        
         switch (params.getColOrder().intValue()) {
             case 0:
-                if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
-                    query.append(" order by id asc ");
-                else
-                    query.append(" order by id desc ");
+                    query.append(" order by unit_capacity_id ").append(order).append(" ");
                 break;
             case 1:
-                if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
-                    query.append(" order by name asc ");
-                else
-                    query.append(" order by name desc ");
+                    query.append(" order by unit_capacity_name ").append(order).append(" ");
                 break;
             case 2:
-                if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
-                    query.append(" order by description asc ");
-                else
-                    query.append(" order by description desc ");
+                    query.append(" order by unit_capacity_code ").append(order).append(" ");
                 break;
             case 3:
-                if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
-                    query.append(" order by code asc ");
-                else
-                    query.append(" order by code desc ");
+                    query.append(" order by unit_capacity_description ").append(order).append(" ");
                 break;
             default:
-                if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
-                    query.append(" order by id asc ");
-                else
-                    query.append(" order by id desc ");
+                query.append(" order by unit_capacity_id ").append(order).append(" ");
                 break;
         }
 
         query.append("limit :limit offset :offset");
         values.addValue("offset", params.getStart());
         values.addValue("limit", params.getLength());
-
-        return this.jdbcTemplate.query(query.toString(), values, (resultSet, i) ->
-                new UnitCapacity(
-                        resultSet.getString("id"),
-                        resultSet.getString("name"),
-                        resultSet.getString("code"),
-                        resultSet.getString("description")
-                ));
+ //auto Mapping to entity
+        return this.jdbcTemplate.query(
+                query.toString(), 
+                values, 
+                new BeanPropertyRowMapper(UnitCapacity.class));
     }
 
     @Override
     public Long datatables(UnitCapacity param) {
-        String baseQuery = "select count(id) as rows \n" +
-                "from unit_capacity\n" +
+        String baseQuery = "select count(unit_capacity_id) as rows \n" +
+                "from unit_capacity \n" +
                 "where 1 = 1 ";
 
         UnitCapacityQueryCompare compare = new UnitCapacityQueryCompare(baseQuery);
@@ -145,35 +132,35 @@ public class UnitCapacityDao implements DaoCrudDataTablesPattern<UnitCapacity, S
 
         @Override
         public StringBuilder getQuery(UnitCapacity param) {
-            if (StringUtils.isNoneBlank(param.getId())) {
-                query.append(" and lower(id) like :id ");
+            if (StringUtils.isNoneBlank(param.getUnitCapacityId())) {
+                query.append(" and lower(unit_capacity_id) like :id ");
                 parameterSource.addValue("id",
                         new StringBuilder("%")
-                                .append(param.getId().toLowerCase())
+                                .append(param.getUnitCapacityId().toLowerCase())
                                 .append("%")
                                 .toString());
             }
 
-            if (StringUtils.isNoneBlank(param.getName())) {
-                query.append(" and lower(name) like :name ");
+            if (StringUtils.isNoneBlank(param.getUnitCapacityName())) {
+                query.append(" and lower(unit_capacity_name) like :name ");
                 parameterSource.addValue("name", new StringBuilder("%")
-                        .append(param.getName().toLowerCase())
+                        .append(param.getUnitCapacityName().toLowerCase())
                         .append("%")
                         .toString());
             }
 
-            if (StringUtils.isNoneBlank(param.getDescription())) {
-                query.append(" and lower(description) like :description ");
+            if (StringUtils.isNoneBlank(param.getUnitCapacityDescription())) {
+                query.append(" and lower(unit_capacity_description) like :description ");
                 parameterSource.addValue("description", new StringBuilder("%")
-                        .append(param.getDescription().toLowerCase())
+                        .append(param.getUnitCapacityDescription().toLowerCase())
                         .append("%")
                         .toString());
             }
             
-            if (StringUtils.isNoneBlank(param.getDescription())) {
-                query.append(" and lower(code) like :code ");
+            if (StringUtils.isNoneBlank(param.getUnitCapacityCode())) {
+                query.append(" and lower(unit_capacity_code) like :code ");
                 parameterSource.addValue("code", new StringBuilder("%")
-                        .append(param.getCode().toLowerCase())
+                        .append(param.getUnitCapacityCode().toLowerCase())
                         .append("%")
                         .toString());
             }

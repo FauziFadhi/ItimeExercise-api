@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 
 @Repository
 public class CategoryDeviceDao implements DaoCrudDataTablesPattern<CategoryDevice, String> {
@@ -58,8 +59,8 @@ public class CategoryDeviceDao implements DaoCrudDataTablesPattern<CategoryDevic
 
     @Override
     public List<CategoryDevice> datatables(DataTablesRequest<CategoryDevice> params) {
-        String baseQuery = "select id, name, description\n" +
-                "from device_category\n" +
+        String baseQuery = "select * \n" +
+                "from device_category \n" +
                 "where 1 = 1 ";
 
         CategoryDevice param = params.getValue();
@@ -67,31 +68,23 @@ public class CategoryDeviceDao implements DaoCrudDataTablesPattern<CategoryDevic
         CategoryDeviceQueryCompare compare = new CategoryDeviceQueryCompare(baseQuery);
         StringBuilder query = compare.getQuery(param);
         MapSqlParameterSource values = compare.getParameters();
-
+        
+        String order = "desc";
+        if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
+            order="asc";
+        
         switch (params.getColOrder().intValue()) {
             case 0:
-                if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
-                    query.append(" order by id asc ");
-                else
-                    query.append(" order by id desc ");
+                    query.append(" order by id ").append(order).append(" ");
                 break;
             case 1:
-                if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
-                    query.append(" order by name asc ");
-                else
-                    query.append(" order by name desc ");
+                    query.append(" order by name ").append(order).append(" ");
                 break;
             case 2:
-                if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
-                    query.append(" order by description asc ");
-                else
-                    query.append(" order by description desc ");
+                    query.append(" order by description ").append(order).append(" ");
                 break;
             default:
-                if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
-                    query.append(" order by id asc ");
-                else
-                    query.append(" order by id desc ");
+                query.append(" order by id ").append(order).append(" ");
                 break;
         }
 
@@ -99,12 +92,11 @@ public class CategoryDeviceDao implements DaoCrudDataTablesPattern<CategoryDevic
         values.addValue("offset", params.getStart());
         values.addValue("limit", params.getLength());
 
-        return this.jdbcTemplate.query(query.toString(), values, (resultSet, i) ->
-                new CategoryDevice(
-                        resultSet.getString("id"),
-                        resultSet.getString("name"),
-                        resultSet.getString("description")
-                ));
+        //auto Mapping to entity
+        return this.jdbcTemplate.query(
+                query.toString(), 
+                values, 
+                new BeanPropertyRowMapper(CategoryDevice.class));
     }
 
     @Override

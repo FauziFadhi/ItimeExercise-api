@@ -9,8 +9,8 @@
  */
 
 create table unit_capacity(
-    id varchar(64) primary key not null,
-    name varchar(20) not null,
-    code varchar(10) not null,
-    description text
+    unit_capacity_id varchar(64) primary key not null,
+    unit_capacity_name varchar(20) not null,
+    unit_capacity_code varchar(10) not null,
+    unit_capacity_description text
 )

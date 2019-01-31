@@ -9,8 +9,8 @@
  */
 
 create table color(
-    id varchar(64) primary key not null,
-    name varchar(20) not null,
-    code varchar(10) not null,
-    description text
+    color_id varchar(64) primary key not null,
+    color_name varchar(20) not null,
+    color_code varchar(10) not null,
+    color_description text
 )

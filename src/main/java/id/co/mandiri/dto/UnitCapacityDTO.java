@@ -13,9 +13,9 @@ public class UnitCapacityDTO {
     @NoArgsConstructor
     public static class UnitCapacityRequestNewDTO {
         @NotNull
-        private String name;
-        private String code;
-        private String description;
+        private String unitCapacityName;
+        private String unitCapacityCode;
+        private String unitCapacityDescription;
     }
 
     @Data
@@ -23,11 +23,11 @@ public class UnitCapacityDTO {
     @NoArgsConstructor
     public static class UnitCapacityRequestUpdateDTO {
         @NotNull
-        private String id;
+        private String unitCapacityId;
         @NotNull
-        private String name;
-        private String code;
-        private String description;
+        private String unitCapacityName;
+        private String unitCapacityCode;
+        private String unitCapacityDescription;
     }
 
 }

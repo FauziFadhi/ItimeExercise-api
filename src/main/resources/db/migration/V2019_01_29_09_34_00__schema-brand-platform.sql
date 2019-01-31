@@ -9,7 +9,7 @@
  */
 
 create table brand(
-    id varchar(64) primary key not null,
-    name varchar(20) not null,
-    description text
+    brand_id varchar(64) primary key not null,
+    brand_name varchar(20) not null,
+    brand_description text
 )

@@ -6,6 +6,8 @@ import id.co.mandiri.entity.Color;
 import id.co.mandiri.entity.LoanStatus;
 import id.co.mandiri.repository.LoanStatusRepository;
 import id.co.mandiri.utils.QueryComparator;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -14,6 +16,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.RowMapper;
 
 @Repository
 public class LoanStatusDao implements DaoCrudDataTablesPattern<LoanStatus, String> {
@@ -59,8 +63,8 @@ public class LoanStatusDao implements DaoCrudDataTablesPattern<LoanStatus, Strin
 
     @Override
     public List<LoanStatus> datatables(DataTablesRequest<LoanStatus> params) {
-        String baseQuery = "select ls.id, ls.name, c.name, c.code, ls.description, color_id\n" +
-                "from loan_status ls left join color c on ls.color_id=c.id \n" +
+        String baseQuery = "select *\n" +
+                "from loan_status left join color on loan_status.color_id=color.color_id \n" +
                 "where 1 = 1 ";
 
         LoanStatus param = params.getValue();
@@ -72,27 +76,27 @@ public class LoanStatusDao implements DaoCrudDataTablesPattern<LoanStatus, Strin
         switch (params.getColOrder().intValue()) {
             case 0:
                 if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
-                    query.append(" order by id asc ");
+                    query.append(" order by loan_status_id asc ");
                 else
-                    query.append(" order by id desc ");
+                    query.append(" order by loan_status_id desc ");
                 break;
             case 1:
                 if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
-                    query.append(" order by name asc ");
+                    query.append(" order by loan_status_name asc ");
                 else
-                    query.append(" order by name desc ");
+                    query.append(" order by loan_status_name desc ");
                 break;
             case 2:
                 if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
-                    query.append(" order by description asc ");
+                    query.append(" order by loan_status_description asc ");
                 else
-                    query.append(" order by description desc ");
+                    query.append(" order by loan_status_description desc ");
                 break;
             default:
             if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
-                query.append(" order by id asc ");
+                query.append(" order by loan_status_id asc ");
             else
-                query.append(" order by id desc ");
+                query.append(" order by loan_status_id desc ");
             break;
         }
 
@@ -100,18 +104,21 @@ public class LoanStatusDao implements DaoCrudDataTablesPattern<LoanStatus, Strin
         values.addValue("offset", params.getStart());
         values.addValue("limit", params.getLength());
 
-        return this.jdbcTemplate.query(query.toString(), values, (resultSet, i) ->
-                new LoanStatus(
-                        resultSet.getString("id"),
-                        resultSet.getString("name"),
-                        resultSet.getObject("color_id", Color.class),
-                        resultSet.getString("description")
-                ));
+//        return this.jdbcTemplate.query(query.toString(),values,new BeanPropertyRowMapper());
+        return this.jdbcTemplate.query(query.toString(), values, new RowMapper<LoanStatus>() {
+            @Override
+            public LoanStatus mapRow(ResultSet resultSet, int i) throws SQLException {
+                Color color = (new BeanPropertyRowMapper<>(Color.class)).mapRow(resultSet, i);
+                LoanStatus loanStatus = (new BeanPropertyRowMapper<>(LoanStatus.class)).mapRow(resultSet, i);
+                loanStatus.setColor(color);
+                return loanStatus;
+            }
+        });
     }
 
     @Override
     public Long datatables(LoanStatus param) {
-        String baseQuery = "select count(id) as rows \n" +
+        String baseQuery = "select count(loan_status_id) as rows \n" +
                 "from loan_status\n" +
                 "where 1 = 1 ";
 
@@ -140,27 +147,27 @@ public class LoanStatusDao implements DaoCrudDataTablesPattern<LoanStatus, Strin
 
         @Override
         public StringBuilder getQuery(LoanStatus param) {
-            if (StringUtils.isNoneBlank(param.getId())) {
-                query.append(" and lower(id) like :id ");
+            if (StringUtils.isNoneBlank(param.getLoanStatusId())) {
+                query.append(" and lower(loan_status_id) like :id ");
                 parameterSource.addValue("id",
                         new StringBuilder("%")
-                                .append(param.getId().toLowerCase())
+                                .append(param.getLoanStatusId().toLowerCase())
                                 .append("%")
                                 .toString());
             }
 
-            if (StringUtils.isNoneBlank(param.getName())) {
-                query.append(" and lower(name) like :name ");
+            if (StringUtils.isNoneBlank(param.getLoanStatusName())) {
+                query.append(" and lower(loan_status_name) like :name ");
                 parameterSource.addValue("name", new StringBuilder("%")
-                        .append(param.getName().toLowerCase())
+                        .append(param.getLoanStatusName().toLowerCase())
                         .append("%")
                         .toString());
             }
 
-            if (StringUtils.isNoneBlank(param.getDescription())) {
-                query.append(" and lower(description) like :description ");
+            if (StringUtils.isNoneBlank(param.getLoanStatusDescription())) {
+                query.append(" and lower(loan_status_description) like :description ");
                 parameterSource.addValue("description", new StringBuilder("%")
-                        .append(param.getDescription().toLowerCase())
+                        .append(param.getLoanStatusDescription().toLowerCase())
                         .append("%")
                         .toString());
             }

@@ -18,14 +18,14 @@ public class Brand {
     @Id
     @GenericGenerator(name = "uuid_gen", strategy = "uuid2")
     @GeneratedValue(generator = "uuid_gen")
-    @Column(name = "id", nullable = false, length = 64)
-    private String id;
+    @Column(name = "brand_id", nullable = false, length = 64)
+    private String brandId;
     
-    @Column(name = "name", nullable = false, length = 20)
-    private String name;
+    @Column(name = "brand_name", nullable = false, length = 20)
+    private String brandName;
     
     @Lob
     @Type(type = "text")
-    @Column(name = "description")
-    private String description;
+    @Column(name = "brand_description")
+    private String brandDescription;
 }

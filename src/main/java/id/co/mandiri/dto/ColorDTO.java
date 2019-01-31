@@ -13,9 +13,9 @@ public class ColorDTO {
     @NoArgsConstructor
     public static class ColorRequestNewDTO {
         @NotNull
-        private String name;
-        private String code;
-        private String description;
+        private String colorName;
+        private String colorCode;
+        private String colorDescription;
     }
 
     @Data
@@ -25,9 +25,9 @@ public class ColorDTO {
         @NotNull
         private String id;
         @NotNull
-        private String name;
-        private String code;
-        private String description;
+        private String colorName;
+        private String colorCode;
+        private String colorDescription;
     }
 
 }
