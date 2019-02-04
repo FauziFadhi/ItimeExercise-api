@@ -32,13 +32,13 @@ public class DeviceDao implements DaoCrudDataTablesPattern<Device, Integer> {
     @Autowired
     private DeviceRepository deviceRepository;
 
-    public List<Device> findByName(String n){
-        String query = "select *"
-                + "from device"
-                + "where device_name like %"+n+"%";
-        return this.jdbcTemplate.query(query,new BeanPropertyRowMapper(Device.class));
+    // public List<Device> findByName(String n){
+    //     String query = "select *"
+    //             + "from device"
+    //             + "where device_name like %"+n+"%";
+    //     return this.jdbcTemplate.query(query,new BeanPropertyRowMapper(Device.class));
 
-    }
+    // }
     
     @Override
     public Device findId(Integer s) {
@@ -168,15 +168,14 @@ public class DeviceDao implements DaoCrudDataTablesPattern<Device, Integer> {
 
         @Override
         public StringBuilder getQuery(Device param) {
-                System.out.println("GGG"+param.getDeviceNumber()+param.getDeviceName());
-            // if (StringUtils.isNoneBlank(String.valueOf(param.getDeviceNumber()))) {
-            //     query.append(" and lower(device_number) like :id ");
-            //     parameterSource.addValue("id",
-            //             new StringBuilder("%")
-            //                     .append(String.valueOf(param.getDeviceNumber()))
-            //                     .append("%")
-            //                     .toString());
-            // }
+            if (param.getDeviceNumber() > 0) {
+                query.append(" and device_number like :id ");
+                parameterSource.addValue("id",
+                        new StringBuilder("%")
+                                .append(param.getDeviceNumber())
+                                .append("%")
+                                .toString());
+            }
 
             if (StringUtils.isNoneBlank(param.getDeviceName())) {
                 query.append(" and lower(device_name) like :name ");

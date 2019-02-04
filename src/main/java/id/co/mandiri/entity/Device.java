@@ -25,7 +25,7 @@ public class Device {
     @Column(name = "device_name", nullable = false, length = 20)
     private String deviceName;
     
-    @JsonIgnoreProperties
+    @JsonIgnoreProperties("device")
     @ManyToOne
     @JoinColumn(name = "color_id", nullable = false)
     private Color color;
